@@ -15,7 +15,7 @@ export const Header = () => {
                     <Link to='/expenses' className={location === '/expenses' ? 'text-white bg-red-lite rounded-lg p-1' : null}>Expenses</Link>
                 </li>
                 <li>
-                    <Link to='/Income' className={location === '/income' ? 'text-white bg-red-lite rounded-lg p-1' : null}>Income</Link>
+                    <Link to='/income' className={location === '/income' ? 'text-white bg-red-lite rounded-lg p-1' : null}>Income</Link>
                 </li>
             </ul>
         </nav>
