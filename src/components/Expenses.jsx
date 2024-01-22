@@ -1,7 +1,8 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { H1 } from './ui/H1'
 import { exmp } from '../data/exp'
 import { Pencil, Trash2 } from 'lucide-react'
+
 
 export const Expenses = () => {
   return (
@@ -10,8 +11,8 @@ export const Expenses = () => {
             <div className='flex flex-col text-center justify-center p-6'>
         <H1>Expenses</H1>
         <div className='flex flex-row gap-2 justify-center mt-8'>
-        <input type='text' placeholder='Seatch Expenses' className='w-10/12 sm:w-72 p-2text-gray-700 bg-gray-200 rounded-xl'/>
-        <button className="bg-red-lite hover:bg-red-lite-hover text-white font-bold p-2 rounded-xl">Add Expenses</button>
+          <input type='text' placeholder='Seatch Expenses' className='w-10/12 sm:w-72 p-2text-gray-700 bg-gray-200 rounded-xl'/>
+          <button className="bg-red-lite hover:bg-red-lite-hover text-white font-bold p-2 rounded-xl">Add Expenses</button>
         </div>
       </div>
 
