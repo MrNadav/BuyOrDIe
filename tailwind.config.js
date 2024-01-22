@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        'red-lite': '#dd1163cc',
+        'red-lite': '#B61354',
+        'red-lite-hover': '#9e114a',
         'blue-lite': '#007bffc'
       }
     },
