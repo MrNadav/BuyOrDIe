@@ -1,37 +1,44 @@
-import React, {useState} from 'react'
+import React, {useEffect, useReducer, useState} from 'react'
 import { H1 } from './ui/H1'
 import { exmp } from '../data/exp'
 import { Pencil, Trash2 } from 'lucide-react'
-
-const Modal = ({ isOpen, onClose, children }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center'>
-      <div className='bg-white p-5 rounded'>
-        {children}
-        <button onClick={onClose}>Close</button>
-      </div>
-    </div>
-  );
-};
+import { AddModal } from './AddModal'
+import { useForm } from 'react-hook-form'
+import {v4 as uuidv4} from 'uuid'
 
 export const Expenses = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const[expenses, setExpenses] = useState([])
 
-  // Function to open modal
-  const openModal = () => setIsModalOpen(true);
+  const onSubmit = (data) => {
+    const newExpense = { ...data, rating, id: uuidv4() };
+    const existingExpenses = JSON.parse(localStorage.getItem('expenses')) || [];
+    existingExpenses.unshift(newExpense);
 
-  // Function to close modal
-  const closeModal = () => setIsModalOpen(false);
+    console.log('Saving expenses to localStorage:', existingExpenses); // checking
+
+    localStorage.setItem('expenses', JSON.stringify(existingExpenses));
+    setExpenses(existingExpenses);
+};
+
+
+
+useEffect(() => {
+  const storedExpenses = JSON.parse(localStorage.getItem('expenses')) || [];
+  console.log('Loaded expenses from localStorage:', storedExpenses); // checking
+  setExpenses(storedExpenses);
+}, [isModalOpen]);
+
+
   return (
 
     <main className=''>
-            <div className='flex flex-col text-center justify-center p-6'>
+      <div className='flex flex-col text-center justify-center p-6'>
         <H1>Expenses</H1>
         <div className='flex flex-row gap-2 justify-center mt-8'>
           <input type='text' placeholder='Seatch Expenses' className='w-10/12 sm:w-72 p-2text-gray-700 bg-gray-200 rounded-xl'/>
-          <button onClick={openModal} className="bg-red-lite hover:bg-red-lite-hover text-white font-bold p-2 rounded-xl">Add Expenses</button>
+          <button onClick={() => setIsModalOpen(true)}  className="bg-red-lite hover:bg-red-lite-hover text-white font-bold p-2 rounded-xl">Add Expenses</button>
         </div>
       </div>
 
@@ -52,10 +59,17 @@ export const Expenses = () => {
           </div>
         ))}
     </div>
-    <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <h2>Add New Expense</h2>
-        <input type='text' placeholder='Seatch Expenses' className='w-10/12 sm:w-72 p-2text-gray-700 bg-gray-200 rounded-xl p-2'/>
-    </Modal>
+    {isModalOpen ? (
+              <AddModal
+              setIsModalOpen={setIsModalOpen} 
+              isModalOpen={isModalOpen} 
+              title='New Expenses' 
+              onSubmit={onSubmit}
+              setRating={setRating}
+              rating={rating}
+
+              />
+            ) : null}
     </main>
   )
 }
