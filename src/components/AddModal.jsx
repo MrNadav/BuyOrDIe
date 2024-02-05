@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Modal } from './ui/Modal'
 import { getIcon } from '../lib/utils'
 import { useForm } from 'react-hook-form'
+import { format  } from 'date-fns'
 
 export const AddModal = ({setIsModalOpen, isModalOpen, title, onSubmit, setRating, rating}) => {
     const {register, handleSubmit} = useForm()
@@ -17,11 +18,11 @@ export const AddModal = ({setIsModalOpen, isModalOpen, title, onSubmit, setRatin
         </div>
         <div className='w-full'>
             <label htmlFor='amount' className='font-semibold'>Amount</label>
-            <input name='amount' type='number' className='w-full pl-2 rounded-lg h-8' placeholder='Amount' {...register('amount', {required: true})}/>
+            <input name='amount' type='number' className='w-full pl-2 rounded-lg h-8' step="0.01" placeholder='Amount' {...register('amount', {required: true})}/>
         </div>
         <div className='w-full'>
             <label htmlFor='date' className='font-semibold'>Date</label>
-            <input name='date' type='date' className='w-full pl-2 rounded-lg h-8' placeholder='Date' {...register('date', {required: true})}/>
+            <input name='date' type='date' className='w-full pl-2 rounded-lg h-8'  defaultValue={format(new Date(), 'yyyy-MM-dd')} placeholder='Date' {...register('date', {required: true})}/>
         </div>
         <div className="w-full">
             <div className="relative mb-6">
