@@ -7,7 +7,8 @@ import { useForm } from 'react-hook-form'
 import {v4 as uuidv4} from 'uuid'
 import { getIcon } from '../lib/utils'
 import { ConfirmationModal } from './ConfirmationModal'
-import { EditModal } from './EditModal'
+import EditModal from './EditModal';
+import { format } from 'date-fns'
 
 export const Expenses = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -71,13 +72,9 @@ const deleteExpense = () => {
 };
 
 const editExpense = (expense) => {
-  // Log the expense before opening the EditModal
-  console.log('Editing expense:', expense);
-
-  setSelectedExpense(expense);
-  setIsEditModalOpen(true);
+  setSelectedExpense(expense); // Set the expense you want to edit
+  setIsEditModalOpen(true); // Open the modal for editing
 };
-
 
 
 const updateExpense = (updatedExpense) => {
@@ -121,12 +118,15 @@ useEffect(() => {
             {showAll ? 'Show Filtered' : 'Show All'}
         </button>
       </div>
-      <div className='flex justify-center items-center  mt-8 text-2xl bg-green-500 rounded-2xl'>
-        <p className='text-white text-bold '>Total Amount: ${totalAmount.toFixed(2)}</p>
+      <div className="flex justify-center mt-12">
+        <div className="bg-green-500 rounded-full px-4 py-2 flex items-center">
+        <p className="text-white font-bold text-sm">Total:</p>
+        <p className="text-white font-bold ml-2">${totalAmount.toFixed(2)}</p>
+        </div>
       </div>
       </div>
 
-      <div className='flex justify-center flex-wrap gap-6 m-2'>
+      <div className="flex justify-center flex-wrap gap-6 m-2">
         {filteredExpenses?.map((expense) => (
         <div key={expense.id} className=" group w-full max-w-sm p-6 m-3 text-center text-white shadow-lg hover:-translate-y-1 hover: hover:scale-100 shadow-red-lite/50 bg-gray-500/10  rounded-2xl hover:shadow-black/40 xl:w-full lg:w-11/12  sm:m-0 sm:mb-4">
            <div className='flex justify-end gap-2'>
@@ -139,7 +139,7 @@ useEffect(() => {
             <h3 className='text-xl font-semibold text-center'>{expense.title}</h3>
             <p className='group-hover:text-red-lite group-hover:text-4xl mt-10 mb-10 flex-grow text-3xl font-bold text-center'>${(+expense.amount).toFixed(2)}</p>
             <div className='flex justify-between items-center'>
-              <p className='text-gray-500'>{expense.date}</p>
+              <p className='text-gray-500'>{format(expense.date, 'dd/MM/yyyy')}</p>
               <span className='text-end'>{getIcon(expense.rating)}</span>
             </div>
             
@@ -166,14 +166,16 @@ useEffect(() => {
       />
     )}
 
-    {isEditModalOpen && (
-        <EditModal
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          onSubmit={updateExpense}
-          expense={selectedExpense}
-        />
-      )}
+{isEditModalOpen && selectedExpense && (
+  <EditModal
+    isOpen={isEditModalOpen}
+    onClose={() => setIsEditModalOpen(false)}
+    onSubmit={updateExpense} // Define this function to handle the expense update
+    initialValues={selectedExpense}
+    // Ensure you pass all other required props to EditModal
+  />
+)}
+
 
 
       
