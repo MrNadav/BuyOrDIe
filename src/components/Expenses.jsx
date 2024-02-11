@@ -16,6 +16,36 @@ export const Expenses = () => {
   const [selectedExpense, setSelectedExpense] = useState(null);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");  
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [showAll, setShowAll] = useState(false);
+
+
+  const goToPreviousMonth = () => {
+    setCurrentMonth(prevMonth => (prevMonth === 0 ? 11 : prevMonth - 1));
+    setCurrentYear(prevYear => (currentMonth === 0 ? prevYear - 1 : prevYear));
+  };
+
+  // Function to move to the next month
+  const goToNextMonth = () => {
+    setCurrentMonth(prevMonth => (prevMonth === 11 ? 0 : prevMonth + 1));
+    setCurrentYear(prevYear => (currentMonth === 11 ? prevYear + 1 : prevYear));
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value.toLowerCase());
+  };
+
+  const filteredExpenses = expenses.filter(expense => {
+    const expenseDate = new Date(expense.date);
+    return (
+      (expense.title.toLowerCase().includes(searchQuery) || expense.amount.toString().includes(searchQuery)) &&
+      (showAll || expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear)
+    );
+  });
+
+  const totalAmount = filteredExpenses.reduce((acc, expense) => acc + parseFloat(expense.amount), 0);
 
   const onSubmit = (data) => {
     const newExpense = { ...data, rating, id: uuidv4() };
@@ -68,19 +98,36 @@ useEffect(() => {
 }, [isModalOpen]);
 
 
+
   return (
 
     <main className=''>
       <div className='flex flex-col text-center justify-center p-6'>
         <H1>Expenses</H1>
         <div className='flex flex-row gap-2 justify-center mt-8'>
-          <input type='text' placeholder='Seatch Expenses' className='w-10/12 sm:w-72 p-2text-gray-700 bg-gray-200 rounded-xl'/>
+          <input type='text' placeholder='Search Expenses' onChange={handleSearchChange} className='w-10/12 sm:w-72 p-2text-gray-700 bg-gray-200 rounded-xl'/>
           <button onClick={() => setIsModalOpen({...isModalOpen, add:true})}  className="bg-red-lite hover:bg-red-lite-hover text-white font-bold p-2 rounded-xl">Add Expenses</button>
         </div>
+      <div className="flex justify-center items-center rounded-lg pt-4">
+        <button className="bg-red-lite hover:bg-red-lite-hover text-white font-bold py-2 px-4 rounded-lg" onClick={goToPreviousMonth}>{'<'}</button>
+        <span className="text-xl font-bold mx-4 text-white">
+        {new Date(currentYear, currentMonth).toLocaleDateString('default', { month: 'long', year: 'numeric' })}
+        </span>
+        <button className="bg-red-lite hover:bg-red-lite-hover text-white font-bold py-2 px-4 rounded-lg" onClick={goToNextMonth}>{'>'}</button>
+        <button
+            onClick={() => setShowAll(!showAll)}
+            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold ml-4  py-2 px-4 rounded-xl ${showAll ? 'bg-opacity-50' : ''}`}
+          >
+            {showAll ? 'Show Filtered' : 'Show All'}
+        </button>
+      </div>
+      <div className='flex justify-center items-center  mt-8 text-2xl bg-green-500 rounded-2xl'>
+        <p className='text-white text-bold '>Total Amount: ${totalAmount.toFixed(2)}</p>
+      </div>
       </div>
 
       <div className='flex justify-center flex-wrap gap-6 m-2'>
-        {expenses?.map((expense) => (
+        {filteredExpenses?.map((expense) => (
         <div key={expense.id} className=" group w-full max-w-sm p-6 m-3 text-center text-white shadow-lg hover:-translate-y-1 hover: hover:scale-100 shadow-red-lite/50 bg-gray-500/10  rounded-2xl hover:shadow-black/40 xl:w-full lg:w-11/12  sm:m-0 sm:mb-4">
            <div className='flex justify-end gap-2'>
                 <Pencil onClick={() => editExpense(expense)}  className='cursor-pointer h-5 w-5 text-sky-400' />
@@ -127,6 +174,9 @@ useEffect(() => {
           expense={selectedExpense}
         />
       )}
+
+
+      
     </main>
   )
 }
